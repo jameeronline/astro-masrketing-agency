@@ -1,0 +1,10 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+const contactURL = getRelativeLocaleUrl("ar", "contact");
+
+import Layout from '@layouts/Layout.astro';
+---
+<Layout>
+<h1 class="text-4xl font-bold mb-4">اتصل بنا</h1>
+<p class="text-lg mb-6">تعرف على المزيد حول مهمتنا ورؤيتنا والفريق الذي يقف وراء هذا المشروع.</p>
+</Layout>

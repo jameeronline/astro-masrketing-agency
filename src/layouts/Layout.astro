@@ -1,14 +1,32 @@
+---
+// styles imports
+import "@/styles/global.css";
+
+//import components
+import Nav from "@/components/Nav.astro";
+import LanguagePicker from "@/components/LanguagePicker.astro";
+
+//i18n
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+---
 <!doctype html>
-<html lang="en">
+<html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro Basics</title>
+		<script is:inline src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 	</head>
 	<body>
+		<Nav />
 		<slot />
+		<footer>
+			<p class="text-center p-4">© 2024 Astro Basics. All rights reserved.</p>
+		</footer>
 	</body>
 </html>
 
