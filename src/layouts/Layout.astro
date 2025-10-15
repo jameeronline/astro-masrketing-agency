@@ -10,6 +10,15 @@ import LanguagePicker from "@/components/LanguagePicker.astro";
 import { getLangFromUrl } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
+
+//transitions
+import { ClientRouter, fade, slide } from 'astro:transitions';
+
+//props
+const { title = "Astro Basics" } = Astro.props;
+
+//import components
+import LayoutScripts from "@/scripts/LayoutScripts.astro";
 ---
 <!doctype html>
 <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
@@ -18,7 +27,8 @@ const lang = getLangFromUrl(Astro.url);
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
+		<ClientRouter />
 		<script is:inline src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 	</head>
 	<body>
@@ -27,6 +37,7 @@ const lang = getLangFromUrl(Astro.url);
 		<footer>
 			<p class="text-center p-4">© 2024 Astro Basics. All rights reserved.</p>
 		</footer>
+		<LayoutScripts />
 	</body>
 </html>
 

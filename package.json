@@ -9,7 +9,10 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/alpinejs": "^0.4.9",
     "@tailwindcss/vite": "^4.1.14",
+    "@types/alpinejs": "^3.13.11",
+    "alpinejs": "^3.15.0",
     "astro": "^5.14.4",
     "flowbite": "^3.1.2",
     "tailwindcss": "^4.1.14"

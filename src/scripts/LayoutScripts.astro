@@ -1,0 +1,34 @@
+<script>
+// Function to initialize all Flowbite components
+function initFlowbiteComponents() {
+  // Re-initialize dropdowns
+  const dropdowns = document.querySelectorAll('[data-dropdown-toggle]');
+  
+  dropdowns.forEach(dropdownToggle => {
+    const dropdownId = dropdownToggle.getAttribute('data-dropdown-toggle');
+    const dropdownMenu = document.getElementById(dropdownId);
+    
+    if (!dropdownMenu) return;
+    
+    // Remove existing event listeners by cloning
+    const newToggle = dropdownToggle.cloneNode(true);
+    dropdownToggle.parentNode.replaceChild(newToggle, dropdownToggle);
+    
+    const newMenu = dropdownMenu.cloneNode(true);
+    dropdownMenu.parentNode.replaceChild(newMenu, dropdownMenu);
+    
+    // Re-add data attributes
+    newToggle.setAttribute('data-dropdown-toggle', dropdownId);
+    newMenu.id = dropdownId;
+  });
+  
+  // Re-initialize Flowbite
+  if (window.Flowbite && window.Flowbite.initDropdowns) {
+    window.Flowbite.initDropdowns();
+  }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', initFlowbiteComponents);
+document.addEventListener('astro:after-swap', initFlowbiteComponents);
+</script>

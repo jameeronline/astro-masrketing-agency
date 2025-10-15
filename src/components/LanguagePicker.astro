@@ -5,32 +5,37 @@ import { languages } from '../i18n/ui';
 const currentLang = Astro.url.pathname.split('/')[1] || 'en';
 ---
 
-<!-- <select id="language-picker">
-    {Object.entries(languages).map(([lang, label]) => (
-        <option value={lang} selected={lang === currentLang}>{label}</option>
-    ))}
-</select> -->
-
-<button type="button" data-dropdown-toggle="language-dropdown-menu" class="inline-flex items-center font-medium justify-center px-4 py-2 text-sm text-gray-900 dark:text-white rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
-    {currentLang === 'en' && (
-        <svg class="w-5 h-5 rounded-full me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 3900 3900"><path fill="#b22234" d="M0 0h7410v3900H0z"/><path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"/><path fill="#3c3b6e" d="M0 0h2964v2100H0z"/><g fill="#fff"><g id="d"><g id="c"><g id="e"><g id="b"><path id="a" d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"/><use xlink:href="#a" y="420"/><use xlink:href="#a" y="840"/><use xlink:href="#a" y="1260"/></g><use xlink:href="#a" y="1680"/></g><use xlink:href="#b" x="247" y="210"/></g><use xlink:href="#c" x="494"/></g><use xlink:href="#d" x="988"/><use xlink:href="#c" x="1976"/><use xlink:href="#e" x="2470"/></g></svg>
-    )}
-    {currentLang === 'ar' && (
-        <svg class="w-5 h-5 rounded-full me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffce00" d="M0 341.3h512V512H0z"/><path d="M0 0h512v170.7H0z"/><path fill="#d00" d="M0 170.7h512v170.6H0z"/></svg>
-    )}
-    {languages[currentLang]}
-</button>
-<!-- Dropdown -->
-<div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700" id="language-dropdown-menu">
-    <ul class="py-2 font-medium" role="none">
-        {Object.entries(languages).map(([lang, label]) => (
-            <li>
-                <a
-                    href={`/${lang}${Astro.url.pathname.replace(/^\/[a-z]{2}/, '')}`}
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                    role="menuitem"
-                >
-                    <div class="inline-flex items-center">
+<div x-data="{ open: false }" class="relative">
+    <button
+        type="button"
+        @click="open = !open"
+        class="inline-flex items-center font-medium justify-center px-4 py-2 gap-2 text-sm text-gray-900 dark:text-white rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+    >
+        {currentLang === 'en' && (
+            <svg class="w-5 h-5 rounded-full me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 3900 3900"><path fill="#b22234" d="M0 0h7410v3900H0z"/><path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"/><path fill="#3c3b6e" d="M0 0h2964v2100H0z"/><g fill="#fff"><g id="d"><g id="c"><g id="e"><g id="b"><path id="a" d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"/><use xlink:href="#a" y="420"/><use xlink:href="#a" y="840"/><use xlink:href="#a" y="1260"/></g><use xlink:href="#a" y="1680"/></g><use xlink:href="#b" x="247" y="210"/></g><use xlink:href="#c" x="494"/></g><use xlink:href="#d" x="988"/><use xlink:href="#c" x="1976"/><use xlink:href="#e" x="2470"/></g></svg>
+        )}
+        {currentLang === 'ar' && (
+            <svg class="w-5 h-5 rounded-full me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffce00" d="M0 341.3h512V512H0z"/><path d="M0 0h512v170.7H0z"/><path fill="#d00" d="M0 170.7h512v170.6H0z"/></svg>
+        )}
+        {languages[currentLang]}
+        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </button>
+    <div
+        x-show="open"
+        @click.away="open = false"
+        x-transition
+        class="absolute right-0 z-50 mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700"
+        style="display: none;"
+    >
+        <ul class="py-2 font-medium" role="none">
+            {Object.entries(languages).map(([lang, label]) => (
+                <li>
+                    <a
+                        href={`/${lang}${Astro.url.pathname.replace(/^\/[a-z]{2}/, '')}`}
+                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                        role="menuitem"
+                        @click="open = false"
+                    >
                         {lang === 'en' && (
                             <svg class="h-3.5 w-3.5 rounded-full me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3900 3900"><path fill="#b22234" d="M0 0h7410v3900H0z"/><path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"/><path fill="#3c3b6e" d="M0 0h2964v2100H0z"/><g fill="#fff"><g id="d"><g id="c"><g id="e"><g id="b"><path id="a" d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"/><use xlink:href="#a" y="420"/><use xlink:href="#a" y="840"/><use xlink:href="#a" y="1260"/></g><use xlink:href="#a" y="1680"/></g><use xlink:href="#b" x="247" y="210"/></g><use xlink:href="#c" x="494"/></g><use xlink:href="#d" x="988"/><use xlink:href="#c" x="1976"/><use xlink:href="#e" x="2470"/></g></svg>
                         )}
@@ -38,26 +43,9 @@ const currentLang = Astro.url.pathname.split('/')[1] || 'en';
                             <svg class="h-3.5 w-3.5 rounded-full me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffce00" d="M0 341.3h512V512H0z"/><path d="M0 0h512v170.7H0z"/><path fill="#d00" d="M0 170.7h512v170.6H0z"/></svg>
                         )}
                         {label}
-                    </div>
-                </a>
-            </li>
-        ))}
-    </ul>
+                    </a>
+                </li>
+            ))}
+        </ul>
+    </div>
 </div>
-
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const languagePicker = document.getElementById('language-picker');
-        
-        if (languagePicker) {
-            languagePicker.addEventListener('change', function(e) {
-                const selectedLang = e.target.value;
-                const currentPath = window.location.pathname;
-                const pathWithoutLang = currentPath.replace(/^\/[a-z]{2}\//, '/');
-                
-                // Navigate to the new language path
-                window.location.href = `/${selectedLang}${pathWithoutLang}`;
-            });
-        }
-    });
-</script> -->

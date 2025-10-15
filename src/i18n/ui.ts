@@ -11,6 +11,7 @@ export const ui = {
     'nav.about': 'About',
     'nav.services': 'Services',
     'nav.pricing': 'Pricing',
+    'nav.blog': 'Blog',
     'nav.contact': 'Contact',
   },
   ar: {
@@ -18,6 +19,7 @@ export const ui = {
     'nav.about': 'حول',
     'nav.services': 'الخدمات',
     'nav.pricing': 'التسعير',
+    'nav.blog': 'مدونة',
     'nav.contact': 'اتصل',
   },
 } as const;

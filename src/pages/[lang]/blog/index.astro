@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import BlogLayout from '../../../layouts/Layout.astro';
+import BlogList from '@components/BlogList.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'ar' } }
+  ];
+}
+
+const { lang } = Astro.params;
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter(post => post.data.lang === lang)
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+const pageTitle = lang === 'en' ? 'Blog Posts' : 'المقالات';
+const pageDescription = lang === 'en' 
+  ? 'Latest blog posts and articles' 
+  : 'أحدث المقالات والمنشورات';
+---
+
+<BlogLayout title={pageTitle} description={pageDescription} lang={lang}>
+  <header style="text-align: center; margin: 3rem 0;">
+    <h1>{pageTitle}</h1>
+    <p style="color: #666; font-size: 1.2rem;">{pageDescription}</p>
+  </header>
+  
+  <BlogList posts={posts} lang={lang} />
+</BlogLayout>

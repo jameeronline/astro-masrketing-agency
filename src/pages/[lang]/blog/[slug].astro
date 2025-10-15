@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  
+  return posts.map(post => ({
+    params: { 
+      lang: post.data.lang,
+      slug: post.slug.split('/').pop() 
+    },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const { lang } = Astro.params;
+
+// Find corresponding post in other language
+const allPosts = await getCollection('blog');
+const otherLangPosts = allPosts.filter(p => 
+  p.slug.split('/').pop() === post.slug.split('/').pop() && 
+  p.data.lang !== lang
+);
+const otherLangPost = otherLangPosts[0];
+---
+
+<Layout title={post.data.title} description={post.data.description} lang={lang}>
+  
+  <article>
+    <header style="margin-bottom: 3rem;">
+      <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">{post.data.title}</h1>
+      
+      <div class="post-meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
+        </time>
+        {post.data.updatedDate && (
+          <span>
+            {lang === 'en' ? ' • Updated: ' : ' • تم التحديث: '}
+            <time datetime={post.data.updatedDate.toISOString()}>
+              {post.data.updatedDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
+            </time>
+          </span>
+        )}
+        {post.data.author && (
+          <span>{lang === 'en' ? ' • By ' : ' • بواسطة '}{post.data.author}</span>
+        )}
+      </div>
+      
+      {post.data.image && (
+        <img 
+          src={post.data.image} 
+          alt={post.data.title} 
+          style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin: 2rem 0;" 
+        />
+      )}
+    </header>
+    
+    <Content />
+    
+    {post.data.tags.length > 0 && (
+      <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
+        <strong>{lang === 'en' ? 'Tags: ' : 'الكلمات المفتاحية: '}</strong>
+        {post.data.tags.map(tag => (
+          <span 
+            style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px; margin: 0 0.3rem; font-size: 0.9rem;"
+          >
+            {tag}
+          </span>
+        ))}
+      </footer>
+    )}
+  </article>
+</Layout>

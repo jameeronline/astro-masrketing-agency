@@ -1,0 +1,71 @@
+---
+export interface Props {
+  posts: any[];
+  lang: 'en' | 'ar';
+}
+
+const { posts, lang } = Astro.props;
+---
+
+<div class="blog-list">
+  {posts.length > 0 ? (
+    posts.map(post => (
+      <article class="post-card" style="
+        border: 1px solid #eee; 
+        border-radius: 8px; 
+        padding: 2rem; 
+        margin-bottom: 2rem;
+        transition: transform 0.2s;
+      ">
+        <h2 style="margin-bottom: 1rem;">
+          <a 
+            href={`/${post.data.lang}/blog/${post.slug.split('/').pop()}`}
+            style="text-decoration: none; color: inherit;"
+          >
+            {post.data.title}
+          </a>
+        </h2>
+        
+        <p style="color: #666; margin-bottom: 1rem;">{post.data.description}</p>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div style="color: #888; font-size: 0.9rem;">
+            <time datetime={post.data.pubDate.toISOString()}>
+              {post.data.pubDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
+            </time>
+            {post.data.author && (
+              <span>{lang === 'en' ? ' • By ' : ' • بواسطة '}{post.data.author}</span>
+            )}
+          </div>
+          
+          {post.data.tags.length > 0 && (
+            <div>
+              {post.data.tags.slice(0, 2).map(tag => (
+                <span style="
+                  background: #f0f0f0; 
+                  padding: 0.2rem 0.6rem; 
+                  border-radius: 12px; 
+                  font-size: 0.8rem;
+                  margin-left: 0.3rem;
+                ">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </article>
+    ))
+  ) : (
+    <p style="text-align: center; color: #666; font-size: 1.2rem;">
+      {lang === 'en' ? 'No posts found.' : 'لا توجد مقالات.'}
+    </p>
+  )}
+</div>
+
+<style>
+  .post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+</style>
