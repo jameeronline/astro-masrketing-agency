@@ -31,6 +31,9 @@
       "@types/*": [
         "src/types/*"
       ],
+      "@i18n/*": [
+        "src/i18n/*"
+      ],
       "@assets/*": [
         "src/assets/*"
       ],

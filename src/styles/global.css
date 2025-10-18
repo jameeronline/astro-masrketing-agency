@@ -1,7 +1,49 @@
 @import "tailwindcss";
 
+/* tailwind plugins */
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+/* @plugin "@tailwindcss/aspect-ratio";
+@plugin "@tailwindcss/container-queries"; */
+
 /* flowbite */
 @import "flowbite/src/themes/default";
 @plugin "flowbite/plugin";
 
 @source "../../node_modules/flowbite";
+
+
+/* Font stacks as CSS variables */
+:root {
+    --font-en: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --font-ar: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", system-ui, "Arial";
+}
+
+@theme{
+    --font-english: var(--font-en);
+    --font-arabic: var(--font-ar);
+
+    --color-primary-50: #ecfff6;
+    --color-primary-100: #d2ffed;
+    --color-primary-200: #a8ffdc;
+    --color-primary-300: #65ffc2;
+    --color-primary-400: #1bffa1;
+    --color-primary-500: #00f982;
+    --color-primary-600: #00d068;
+    --color-primary-700: #00a255;
+    --color-primary-800: #007e47;
+    --color-primary-900: #00663d;
+    --color-primary-950: #003b20;
+
+    /* Typography configuration */
+    --typography-prose-max-width: none;
+    --typography-prose-sm-max-width: none;
+    --typography-prose-lg-max-width: none;
+    --typography-prose-xl-max-width: none;
+    --typography-prose-2xl-max-width: none;
+}
+
+/* Add this to your existing global.css */
+.prose {
+  max-width: none !important;
+}

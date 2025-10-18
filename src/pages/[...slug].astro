@@ -4,25 +4,15 @@ import Layout from '@layouts/Layout.astro';
 
 // Extract locale from URL (Astro provides this via i18n)
 const { slug } = Astro.params;
-const locale = Astro.url.pathname.split('/')[1]; // e.g., 'en' or 'ar'
-const fullSlug = slug.slice(locale.length + 1); // Remove locale prefix for Contentful slug
-
-console.log('Locale:', locale);
-console.log('Full Slug:', fullSlug);
-
-const page = await getEntryBySlug('contentPages', fullSlug, locale === 'ar' ? 'ar-SA' : 'en-US');
-
-console.log(page);
-
-if (!page) {
-  return Astro.redirect('/404');
-}
+const locale = Astro.url.pathname.split('/')[1]; //lang
+const fullSlug = slug.slice(locale.length + 1); //slug
 
 export async function getStaticPaths() {
   const locales = ['en', 'ar'];
   const paths = [];
   for (const locale of locales) {
     const entries = await getEntries('contentPages', locale === 'ar' ? 'ar-SA' : 'en-US');
+    console.log(entries);
     for (const entry of entries) {
       paths.push({
         params: { slug: `${locale}/${entry.slug}` },
@@ -30,13 +20,24 @@ export async function getStaticPaths() {
       });
     }
   }
+  console.log(paths);
   return paths;
+}
+
+const page = await getEntryBySlug('contentPages', fullSlug, locale === 'ar' ? 'ar-SA' : 'en-US');
+
+if (!page) {
+  return Astro.redirect(`/${locale}/404`);
+}else{
+  console.log(page);
 }
 ---
 
 <Layout title={page.pageTitle} locale={locale}>
-  <main class={locale === 'ar' ? 'rtl' : 'ltr'}>
-    <h1>{page.pageTitle}</h1>
-    <div set:html={page.pageContentHtml} />
-  </main>
+    <section class="my-16">
+        <h1 class="text-4xl font-bold mb-4">{page.pageTitle}</h1>
+        <article class="prose">
+            <div set:html={page.pageContentHtml} />
+        </article>
+    </section>
 </Layout>
