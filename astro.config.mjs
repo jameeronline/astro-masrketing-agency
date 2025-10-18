@@ -21,6 +21,9 @@ export default defineConfig({
       }
   },
 
+  // Disable prefetch globally
+  prefetch: false,
+
   vite: {
     plugins: [tailwindcss()]
   },
