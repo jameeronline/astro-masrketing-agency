@@ -136,3 +136,22 @@ export async function getEntries(contentType: string, locale: string = 'en-US') 
     return item.fields;
   });
 }
+
+export async function getEntryById(id: string, locale: string = 'en-US') {
+  try {
+    const entry = await client.getEntry(id, { locale });
+    if (!entry || !entry.fields) return null;
+
+    const fields = entry.fields;
+
+    // Render rich text fields to HTML if present
+    if (fields.details) {
+      fields.detailsHtml = documentToHtmlString(fields.details);
+    }
+
+    return fields;
+  } catch (error) {
+    console.error('Error fetching entry by ID:', error);
+    return null;
+  }
+}

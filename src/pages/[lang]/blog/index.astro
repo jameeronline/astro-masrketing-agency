@@ -1,7 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import BlogLayout from '../../../layouts/Layout.astro';
+import Layout from '@layouts/Layout.astro';
 import BlogList from '@components/BlogList.astro';
+
+//contentful imports
+import { getEntries } from '@/lib/contentful';
 
 export async function getStaticPaths() {
   return [
@@ -11,10 +14,10 @@ export async function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
-const allPosts = await getCollection('blog');
-const posts = allPosts
-  .filter(post => post.data.lang === lang)
-  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+//get all the blog post
+const entries = await getEntries('blog', lang === 'en' ? 'en-US' : 'ar-SA');
+//console.log('CMS Posts:', entries);
 
 const pageTitle = lang === 'en' ? 'Blog Posts' : 'المقالات';
 const pageDescription = lang === 'en' 
@@ -22,11 +25,14 @@ const pageDescription = lang === 'en'
   : 'أحدث المقالات والمنشورات';
 ---
 
-<BlogLayout title={pageTitle} description={pageDescription} lang={lang}>
-  <header style="text-align: center; margin: 3rem 0;">
-    <h1>{pageTitle}</h1>
-    <p style="color: #666; font-size: 1.2rem;">{pageDescription}</p>
-  </header>
-  
-  <BlogList posts={posts} lang={lang} />
-</BlogLayout>
+<Layout title={pageTitle} description={pageDescription} lang={lang}>
+  <section class="py-32">
+    <div class="container flex flex-col items-center gap-16">
+      <h1 class="mx-auto mb-3 text-pretty text-center text-2xl font-semibold md:mb-4 md:text-3xl lg:mb-6 lg:max-w-3xl">
+        {pageTitle}
+      </h1>
+
+      <BlogList posts={entries} lang={lang} />
+    </div>
+  </section>
+</Layout>

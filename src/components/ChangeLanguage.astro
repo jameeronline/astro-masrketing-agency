@@ -1,0 +1,12 @@
+---
+import { languages } from '@i18n/ui';
+import { getLangFromUrl } from '@/i18n/utils';
+
+// Get current language from URL or default
+const currentLang = Astro.url.pathname.split('/')[1] || 'en';
+---
+
+<a href={'/' + (currentLang === 'en' ? 'ar' : 'en')} class="inline-flex items-center font-medium justify-center px-4 py-2 gap-2 text-sm text-gray-900 dark:text-white rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white font-arabic rtl:font-english">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe-icon lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+    {currentLang === 'en' ? 'العربية' : 'English'}
+</a>

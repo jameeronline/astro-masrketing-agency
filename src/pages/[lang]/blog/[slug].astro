@@ -1,74 +1,203 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../../../layouts/Layout.astro';
+import Layout from "@layouts/Layout.astro";
+import { Image } from "astro:assets";
+
+import { getEntries, getEntryById } from "@/lib/contentful";
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  
-  return posts.map(post => ({
-    params: { 
-      lang: post.data.lang,
-      slug: post.slug.split('/').pop() 
-    },
-    props: { post },
-  }));
+  const locales = ["en", "ar"];
+  const paths = [];
+
+  for (const locale of locales) {
+    const entries = await getEntries(
+      "blog",
+      locale === "ar" ? "ar-SA" : "en-US"
+    );
+
+    for (const entry of entries) {
+      // Extract just the slug without language prefix
+      const slug = entry.slug.split("/").pop() || entry.slug;
+
+      paths.push({
+        params: {
+          lang: locale,
+          slug: slug,
+        },
+        props: { entry },
+      });
+    }
+  }
+
+  //console.log('Generated paths:', paths);
+  return paths;
 }
 
-const { post } = Astro.props;
-const { Content } = await post.render();
-const { lang } = Astro.params;
+const { entry } = Astro.props;
+const { lang, slug } = Astro.params;
 
-// Find corresponding post in other language
-const allPosts = await getCollection('blog');
-const otherLangPosts = allPosts.filter(p => 
-  p.slug.split('/').pop() === post.slug.split('/').pop() && 
-  p.data.lang !== lang
-);
-const otherLangPost = otherLangPosts[0];
+//extract entry fields
+const { title, summary, details, postThumbnail, tags, category } = entry;
+
+const tagsArray = tags.map((tag) => tag.fields.title.trim());
+const categoriesArray = category.map((cat) => cat.fields.title.trim());
+
+//render rich text to HTML
+const pageDetails = documentToHtmlString(details);
 ---
 
-<Layout title={post.data.title} description={post.data.description} lang={lang}>
-  
+<Layout title={title} description={summary} lang={lang}>
+  <section>
+    <div
+      class="container flex w-full flex-col items-center pb-8 pt-4 md:flex-row md:pb-10 md:pt-8 lg:pb-16"
+    >
+      <!-- <aside
+        class="top-20 mb-8 w-full self-start pt-8 md:sticky md:mr-8 md:w-fit md:min-w-[16rem] md:flex-1 lg:mr-32 lg:max-w-[18rem] lg:shrink-0 2xl:w-full"
+      >
+        <div class="mb-8 flex w-full max-w-fit shrink-0 flex-col md:mb-10">
+        <div class="hidden w-full md:mt-1 md:block">
+          <div class="flex w-full items-center space-x-6">
+            <a href="#" class="hover:-tranzinc-y-0.5"><img src="/images/placeholders/logos/instagram-icon.svg"
+                alt="Instagram" class="size-5 text-zinc-600" /></a><a href="#" class="hover:-tranzinc-y-0.5"><img
+                src="/images/placeholders/logos/linkedin-icon.svg" alt="LinkedIn" class="size-5 text-zinc-600" /></a><a
+              href="#" class="hover:-tranzinc-y-0.5"><img src="/images/placeholders/logos/producthunt-icon.svg"
+                alt="Product Hunt" class="size-5 text-zinc-600" /></a><a href="#" class="hover:-tranzinc-y-0.5"><img
+                src="/images/placeholders/logos/twitter-icon.svg" alt="Twitter" class="size-5 text-zinc-600" /></a>
+          </div>
+        </div>
+      </div>
+        <div
+          class="flex flex-col rounded-xl border border-border bg-zinc-100 py-6 md:py-8"
+        >
+          <div class="md:mb-4.5 mb-6 px-6 font-medium leading-5">
+            About Case Study
+          </div>
+          <div class="mb-5 px-6 last:mb-0">
+            <div class="mb-2 text-xs font-semibold">Company</div>
+            <div class="overflow-hidden text-xs text-zinc-600 md:text-sm">
+              Suspendisse vel euismod sem. Sed sollicitudin augue eu facilisis
+              scelerisque. Nullam pharetra tortor ut massa accumsan egestas.
+            </div>
+          </div>
+          <div class="mb-5 px-6 last:mb-0">
+            <div class="mb-2 text-xs font-semibold">Industry</div>
+            <div class="overflow-hidden text-xs text-zinc-600 md:text-sm">
+              Suspendisse volutpat
+            </div>
+          </div>
+          <div class="mb-5 border-t border-border px-6 pt-5 last:mb-0">
+            <div class="mb-2 text-xs font-semibold">Location</div>
+            <div class="overflow-hidden text-xs text-zinc-600 md:text-sm">
+              London, United Kingdom
+            </div>
+          </div>
+          <div class="mb-5 px-6 last:mb-0">
+            <div class="mb-2 text-xs font-semibold">Company size</div>
+            <div class="overflow-hidden text-xs text-zinc-600 md:text-sm">
+              11-50
+            </div>
+          </div>
+          <div class="mb-5 px-6 last:mb-0">
+            <div class="mb-2 text-xs font-semibold">Website</div>
+            <div class="overflow-hidden text-xs text-zinc-600 md:text-sm">
+              <a href="#" class="underline hover:text-foreground"
+                >https://example.com/</a
+              >
+            </div>
+          </div>
+          <div class="mb-5 px-6 last:mb-0">
+            <div class="mb-2 text-xs font-semibold">Topics</div>
+            <div class="overflow-hidden text-xs text-zinc-600 md:text-sm">
+              Sed sollicitudin augue eu facilisis scelerisque
+            </div>
+          </div>
+        </div>
+      </aside> -->
+      <article class="prose lg:prose-lg">
+        <h1>{title}</h1>
+
+        {
+          postThumbnail && postThumbnail?.fields?.file?.url ? (
+            <Image
+              class="object-cover w-full h-full bg-slate-50 dark:bg-transparent"
+              src={postThumbnail?.fields?.file?.url}
+              alt={title}
+              format="webp"
+              loading="lazy"
+              width={1600}
+              height={900}
+            />
+          ) : (
+            <img
+              src="/images/fallback.svg"
+              alt={title}
+              class="h-full w-full object-cover transition-transform group-hover:scale-[1.05]"
+            />
+          )
+        }
+
+        {
+          pageDetails ? (
+            <Fragment class="post-content" set:html={pageDetails} />
+          ) : (
+            <p>
+              {lang === "en" ? "Content not available." : "المحتوى غير متوفر."}
+            </p>
+          )
+        }
+      </article>
+    </div>
+  </section>
+
   <article>
     <header style="margin-bottom: 3rem;">
-      <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">{post.data.title}</h1>
-      
-      <div class="post-meta">
-        <time datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
-        </time>
-        {post.data.updatedDate && (
+      <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">{title}</h1>
+
+      <p>{summary}</p>
+
+      <div class="post-meta" style="margin-bottom: 1rem; color: #666;">
+        <!-- {currentPost.data.pubDate && (
+          <time datetime={currentPost.data.pubDate.toISOString()}>
+            {currentPost.data.pubDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
+          </time>
+        )} -->
+        <!-- {currentPost.data.updatedDate && (
           <span>
             {lang === 'en' ? ' • Updated: ' : ' • تم التحديث: '}
-            <time datetime={post.data.updatedDate.toISOString()}>
-              {post.data.updatedDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
+            <time datetime={currentPost.data.updatedDate.toISOString()}>
+              {currentPost.data.updatedDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
             </time>
           </span>
         )}
-        {post.data.author && (
-          <span>{lang === 'en' ? ' • By ' : ' • بواسطة '}{post.data.author}</span>
-        )}
+        {currentPost.data.author && (
+          <span>{lang === 'en' ? ' • By ' : ' • بواسطة '}{currentPost.data.author}</span>
+        )} -->
       </div>
-      
-      {post.data.image && (
-        <img 
-          src={post.data.image} 
-          alt={post.data.title} 
-          style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin: 2rem 0;" 
-        />
-      )}
     </header>
-    
-    <Content />
-    
-    {post.data.tags.length > 0 && (
+
+    {tagsArray && tagsArray.length > 0 && (
       <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
         <strong>{lang === 'en' ? 'Tags: ' : 'الكلمات المفتاحية: '}</strong>
-        {post.data.tags.map(tag => (
+        {tagsArray.map(tag => (
           <span 
-            style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px; margin: 0 0.3rem; font-size: 0.9rem;"
+            style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px; margin: 0 0.3rem; font-size: 0.9rem; display: inline-block; margin-bottom: 0.5rem;"
           >
             {tag}
+          </span>
+        ))}
+      </footer>
+    )}
+
+
+
+    {categoriesArray && categoriesArray.length > 0 && (
+      <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
+        <strong>{lang === 'en' ? 'Categories: ' : 'الفئات: '}</strong>
+        {categoriesArray.map(cat => (
+          <span 
+            style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px; margin: 0 0.3rem; font-size: 0.9rem; display: inline-block; margin-bottom: 0.5rem;"
+          >
+            {cat}
           </span>
         ))}
       </footer>
