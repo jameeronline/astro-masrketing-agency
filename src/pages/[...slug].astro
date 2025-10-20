@@ -12,7 +12,7 @@ export async function getStaticPaths() {
   const paths = [];
   for (const locale of locales) {
     const entries = await getEntries('contentPages', locale === 'ar' ? 'ar-SA' : 'en-US');
-    console.log(entries);
+    //console.log(entries);
     for (const entry of entries) {
       paths.push({
         params: { slug: `${locale}/${entry.slug}` },
@@ -20,7 +20,7 @@ export async function getStaticPaths() {
       });
     }
   }
-  console.log(paths);
+  //console.log(paths);
   return paths;
 }
 
@@ -29,7 +29,7 @@ const page = await getEntryBySlug('contentPages', fullSlug, locale === 'ar' ? 'a
 if (!page) {
   return Astro.redirect(`/${locale}/404`);
 }else{
-  console.log(page);
+  //console.log(page);
 }
 ---
 

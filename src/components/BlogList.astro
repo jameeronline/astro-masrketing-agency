@@ -1,71 +1,104 @@
 ---
-export interface Props {
-  posts: any[];
-  lang: 'en' | 'ar';
-}
+//astro import
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
 
 const { posts, lang } = Astro.props;
 ---
 
-<div class="blog-list">
+<div class="grid gap-y-10 sm:grid-cols-12 sm:gap-y-12 md:gap-y-16 lg:gap-y-20">
   {posts.length > 0 ? (
     posts.map(post => (
-      <article class="post-card" style="
-        border: 1px solid #eee; 
-        border-radius: 8px; 
-        padding: 2rem; 
-        margin-bottom: 2rem;
-        transition: transform 0.2s;
-      ">
-        <h2 style="margin-bottom: 1rem;">
-          <a 
-            href={`/${post.data.lang}/blog/${post.slug.split('/').pop()}`}
-            style="text-decoration: none; color: inherit;"
-          >
-            {post.data.title}
-          </a>
-        </h2>
-        
-        <p style="color: #666; margin-bottom: 1rem;">{post.data.description}</p>
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-          <div style="color: #888; font-size: 0.9rem;">
-            <time datetime={post.data.pubDate.toISOString()}>
-              {post.data.pubDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
-            </time>
-            {post.data.author && (
-              <span>{lang === 'en' ? ' • By ' : ' • بواسطة '}{post.data.author}</span>
-            )}
-          </div>
-          
-          {post.data.tags.length > 0 && (
-            <div>
-              {post.data.tags.slice(0, 2).map(tag => (
-                <span style="
-                  background: #f0f0f0; 
-                  padding: 0.2rem 0.6rem; 
-                  border-radius: 12px; 
-                  font-size: 0.8rem;
-                  margin-left: 0.3rem;
-                ">
-                  {tag}
-                </span>
-              ))}
+      <a href={`/${lang}/blog/${post.slug}`}
+        class="group order-last grid gap-y-6 sm:order-first sm:col-span-12 sm:grid-cols-10 sm:gap-x-5 sm:gap-y-0 md:items-center md:gap-x-8 lg:col-span-10 lg:col-start-2 lg:gap-x-12">
+        <div class="sm:col-span-5">
+          <div class="mb-4 md:mb-6">
+            <div class="flex text-xs uppercase tracking-wider text-zinc-600">
+              <span class="mr-3 md:mr-5 lg:mr-6">Webinar</span><span class="mr-3 md:mr-5 lg:mr-6">Employer of
+                record</span>
             </div>
-          )}
+          </div>
+          <h3 class="text-xl font-semibold md:text-2xl lg:text-3xl">
+            {post.title}
+          </h3>
+          <div class="mt-4 flex flex-col items-start space-y-4 md:mt-5">
+            <p class="text-gray-600">
+              {post.summary}
+            </p>
+            <p class="flex items-center space-x-1 mt-4">
+              <span class="font-semibold md:text-base text-primary-900 underline">Read more</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-arrow-right ml-2 size-3 transition-transform group-hover:tranzinc-x-1 fill-primary-900">
+                <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg></p>
+          </div>
         </div>
-      </article>
+        <div class="order-first sm:order-last sm:col-span-5">
+          <div class="aspect-[16/9] overflow-clip rounded-lg border border-border">
+
+          {post.postThumbnail && post.postThumbnail?.fields?.file?.url ? (
+            <Image
+              class="object-cover w-full h-full bg-slate-50 transition duration-300 ease-in-out hover:scale-110 dark:bg-transparent"
+              src={post.postThumbnail?.fields?.file?.url}
+              alt={post.title}
+              format="webp"
+              loading="lazy"
+              width={1600}
+              height={900}
+            />
+          ) : (
+            <img
+              src="/images/placeholders/minima/placeholder-dark-1.jpg"
+              alt={post.title}
+              class="h-full w-full object-cover transition-transform group-hover:scale-[1.05]"
+            />
+          )}
+            {/* <img src="/images/placeholders/minima/placeholder-dark-1.jpg"
+              alt="Duis sem sem, gravida vel porttitor eu, volutpat ut arcu"
+              class="h-full w-full object-cover transition-transform group-hover:scale-[1.05]" /> */}
+          </div>
+        </div>
+      </a>
+      // <article class="post-card border border-gray-100 rounded-lg p-1 mb-8 transition-transform transform hover:-translate-y-1 hover:shadow-lg">
+      //   <h2 class="mb-4">
+      //     <a 
+      //       href={`/${lang}/blog/${post.slug.split('/').pop()}`}
+      //       class="text-decoration-none text-inherit"
+      //     >
+      //       {post.title}
+      //     </a>
+      //   </h2>
+        
+      //   <p class="text-gray-600 mb-4">{post.summary}</p>
+        
+      //   <div class="flex justify-between items-center flex-wrap gap-4">
+      //     {/* <div class="text-gray-500 text-sm">
+      //       <time datetime={post.pubDate.toISOString()}>
+      //         {post.pubDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG')}
+      //       </time>
+      //       {post.author && (
+      //         <span>{lang === 'en' ? ' • By ' : ' • بواسطة '}{post.author}</span>
+      //       )}
+      //     </div> */}
+          
+      //     {/* {post.tags.length > 0 && (
+      //       <div class="flex items-center">
+      //         {post.tags.map(tag => (
+      //           <a href={`/${lang}/${tag.slug}`} class="bg-gray-100 px-3 py-1 rounded-full text-xs ml-1">
+      //             {tag.title}
+      //           </a>
+      //         ))}
+      //       </div>
+      //     )} */}
+      //   </div>
+      // </article>
     ))
   ) : (
-    <p style="text-align: center; color: #666; font-size: 1.2rem;">
+    <p class="text-center text-gray-600 text-lg">
       {lang === 'en' ? 'No posts found.' : 'لا توجد مقالات.'}
     </p>
   )}
 </div>
-
-<style>
-  .post-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-</style>
