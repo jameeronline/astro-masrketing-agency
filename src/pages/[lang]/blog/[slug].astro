@@ -39,8 +39,8 @@ const { lang, slug } = Astro.params;
 //extract entry fields
 const { title, summary, details, postThumbnail, tags, category } = entry;
 
-const tagsArray = tags.map((tag) => tag.fields.title.trim());
-const categoriesArray = category.map((cat) => cat.fields.title.trim());
+//const tagsArray = tags.map((tag) => tag.fields.title.trim());
+//const categoriesArray = category.map((cat) => cat.fields.title.trim());
 
 //render rich text to HTML
 const pageDetails = documentToHtmlString(details);
@@ -175,7 +175,7 @@ const pageDetails = documentToHtmlString(details);
       </div>
     </header>
 
-    {tagsArray && tagsArray.length > 0 && (
+    <!-- {tagsArray && tagsArray.length > 0 && (
       <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
         <strong>{lang === 'en' ? 'Tags: ' : 'الكلمات المفتاحية: '}</strong>
         {tagsArray.map(tag => (
@@ -186,11 +186,11 @@ const pageDetails = documentToHtmlString(details);
           </span>
         ))}
       </footer>
-    )}
+    )} -->
 
 
 
-    {categoriesArray && categoriesArray.length > 0 && (
+    <!-- {categoriesArray && categoriesArray.length > 0 && (
       <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
         <strong>{lang === 'en' ? 'Categories: ' : 'الفئات: '}</strong>
         {categoriesArray.map(cat => (
@@ -201,6 +201,6 @@ const pageDetails = documentToHtmlString(details);
           </span>
         ))}
       </footer>
-    )}
+    )} -->
   </article>
 </Layout>
